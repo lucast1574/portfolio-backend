@@ -1,6 +1,11 @@
 import { Args, Context, Field, Mutation, ObjectType, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User, UserDocument } from '../users/user.schema';
+import * as bcrypt from 'bcrypt';
+import { ForbiddenException } from '@nestjs/common';
 
 @ObjectType()
 class LoginResult {
@@ -10,7 +15,24 @@ class LoginResult {
 
 @Resolver()
 export class AuthResolver {
-  constructor(private auth: AuthService) {}
+  constructor(
+    private auth: AuthService,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+  ) {}
+
+  @Mutation(() => Boolean)
+  async bootstrapAdmin(
+    @Args('username') username: string,
+    @Args('password') password: string,
+    @Args('secret') secret: string,
+  ): Promise<boolean> {
+    const expected = process.env.BOOTSTRAP_SECRET;
+    if (!expected || secret !== expected) throw new ForbiddenException();
+    const count = await this.userModel.countDocuments();
+    if (count > 0) throw new ForbiddenException('Already bootstrapped');
+    await this.userModel.create({ username, passwordHash: await bcrypt.hash(password, 12) });
+    return true;
+  }
 
   @Mutation(() => LoginResult)
   async login(
