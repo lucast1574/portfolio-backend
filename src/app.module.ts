@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProjectsModule } from './projects/projects.module';
 import { SiteConfigModule } from './site-config/site-config.module';
+import { ProposalsModule } from './proposals/proposals.module';
 import { HealthController } from './health.controller';
 
 @Module({
@@ -25,6 +26,7 @@ import { HealthController } from './health.controller';
     AuthModule,
     ProjectsModule,
     SiteConfigModule,
+    ProposalsModule,
   ],
   controllers: [HealthController],
 })

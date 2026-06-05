@@ -19,10 +19,18 @@ class Social {
 }
 
 @ObjectType()
+class WorkingOnType {
+  @Field() title: string;
+  @Field() name: string;
+  @Field({ nullable: true }) proposalId?: string;
+}
+
+@ObjectType()
 class SiteConfigType {
   @Field(() => Profile) profile: Profile;
   @Field(() => Social) social: Social;
   @Field({ nullable: true }) avatar?: string;
+  @Field(() => WorkingOnType, { nullable: true }) workingOn?: WorkingOnType;
 }
 
 @InputType()
@@ -41,11 +49,20 @@ class SocialInput {
 }
 
 @InputType()
+class WorkingOnInput {
+  @Field() title: string;
+  @Field() name: string;
+  @Field({ nullable: true }) proposalId?: string;
+}
+
+@InputType()
 class UpdateSiteConfigInput {
   @Field(() => ProfileInput, { nullable: true }) profileEs?: ProfileInput;
   @Field(() => ProfileInput, { nullable: true }) profileEn?: ProfileInput;
   @Field(() => SocialInput, { nullable: true }) social?: SocialInput;
   @Field({ nullable: true }) avatar?: string;
+  @Field(() => WorkingOnInput, { nullable: true }) workingOn?: WorkingOnInput;
+  @Field({ nullable: true }) clearWorkingOn?: boolean;
 }
 
 @Resolver()
@@ -61,6 +78,7 @@ export class SiteConfigResolver {
       profile: { name: p.name || '', role: p.role || '', bio: p.bio || '' },
       social: doc.social || {},
       avatar: doc.avatar,
+      workingOn: doc.workingOn || null,
     };
   }
 
@@ -73,11 +91,21 @@ export class SiteConfigResolver {
     if (input.profileEn) i18n.en = input.profileEn;
     const social = input.social ? { ...(current.social || {}), ...input.social } : current.social;
     const avatar = input.avatar !== undefined ? input.avatar : current.avatar;
-    const doc: any = await this.svc.update({ i18n, social, avatar });
+    
+    let workingOn = current.workingOn;
+    if (input.clearWorkingOn) {
+      workingOn = null;
+    } else if (input.workingOn) {
+      workingOn = input.workingOn;
+    }
+
+    const doc: any = await this.svc.update({ i18n, social, avatar, workingOn });
     return {
       profile: { name: doc.i18n.es.name, role: doc.i18n.es.role, bio: doc.i18n.es.bio },
       social: doc.social,
       avatar: doc.avatar,
+      workingOn: doc.workingOn || null,
     };
   }
 }
+

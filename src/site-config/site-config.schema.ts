@@ -25,6 +25,14 @@ class Social {
 }
 const SocialSchema = SchemaFactory.createForClass(Social);
 
+@Schema({ _id: false })
+class WorkingOn {
+  @Prop({ required: true }) title: string;
+  @Prop({ required: true }) name: string;
+  @Prop() proposalId?: string;
+}
+const WorkingOnSchema = SchemaFactory.createForClass(WorkingOn);
+
 @Schema({ timestamps: true })
 export class SiteConfig {
   @Prop({ default: 'main', unique: true })
@@ -38,7 +46,11 @@ export class SiteConfig {
 
   @Prop()
   avatar?: string;
+
+  @Prop({ type: WorkingOnSchema, default: null })
+  workingOn?: any;
 }
 
 export type SiteConfigDocument = SiteConfig & Document;
 export const SiteConfigSchema = SchemaFactory.createForClass(SiteConfig);
+
