@@ -18,7 +18,11 @@ async function bootstrap() {
     credentials: true,
   });
   app.use(cookieParser());
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  // NOTE: whitelist:true would strip nested input fields (e.g. i18n.es.name)
+  // because our GraphQL @InputType DTOs do not carry class-validator
+  // decorators on nested classes. GraphQL already validates the shape via
+  // Apollo, so we only need transform here.
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   const port = Number(process.env.PORT || 4000);
   await app.listen(port, '0.0.0.0');
   console.log(`🚀 Portfolio backend listening on :${port}`);
