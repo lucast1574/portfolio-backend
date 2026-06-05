@@ -22,6 +22,10 @@ export class Links {
   @Field({ nullable: true }) web?: string;
   @Field({ nullable: true }) playStore?: string;
   @Field({ nullable: true }) appStore?: string;
+  @Field({ nullable: true }) windows?: string;
+  @Field({ nullable: true }) macOS?: string;
+  @Field({ nullable: true }) linux?: string;
+  @Field({ nullable: true }) msStore?: string;
 }
 
 @ObjectType()
@@ -75,6 +79,10 @@ class LinksInput {
   @Field({ nullable: true }) web?: string;
   @Field({ nullable: true }) playStore?: string;
   @Field({ nullable: true }) appStore?: string;
+  @Field({ nullable: true }) windows?: string;
+  @Field({ nullable: true }) macOS?: string;
+  @Field({ nullable: true }) linux?: string;
+  @Field({ nullable: true }) msStore?: string;
 }
 
 @InputType()

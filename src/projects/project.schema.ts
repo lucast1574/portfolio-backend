@@ -31,6 +31,10 @@ class Links {
   @Prop() web?: string;
   @Prop() playStore?: string;
   @Prop() appStore?: string;
+  @Prop() windows?: string;
+  @Prop() macOS?: string;
+  @Prop() linux?: string;
+  @Prop() msStore?: string;
 }
 const LinksSchema = SchemaFactory.createForClass(Links);
 
